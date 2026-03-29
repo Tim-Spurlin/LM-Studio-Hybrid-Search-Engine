@@ -15,28 +15,23 @@ It serves as a "Hub" that intercepts LM Studio API calls, augments them with hig
 
 ## 🏗️ Architecture
 
-```mermaid
-graph TD
-    User([User / LM Studio Client]) -->|API Request| Proxy[proxy_server.py <br> FastAPI Port: 8000]
-    
-    subgraph RAG Pipeline
-        Proxy -->|1. Formulate Queries| LangGraph(LangGraph State Machine)
-        LangGraph -->|2. Search Candidates| FAISS[(FAISS HNSW Index)]
-        FAISS -->|3. Evaluate Truth & Entropy| IMDDS[IMDDS Truth Filter]
-        IMDDS -->|4. Strict Re-ranking| CrossEncoder(Cross-Encoder)
-    end
-    
-    CrossEncoder -->|Augmented Prompt| LMStudio[LM Studio Backend <br> Port: 8888]
-    LMStudio -->|Streaming Response| Proxy
-    Proxy -->|Streaming Response| User
+```text
+proxy_rs (Rust, axum) — Port 8000
+├── GGUF embedder (llama-cpp-2, GPU)
+├── usearch HNSW index  
+├── candle CrossEncoder (CPU)
+├── IMDDS truth filter (inline Rust)
+├── Gemini Flash routing (online/offline)
+└── LangGraph-equivalent tokio state machine
 
-    subgraph Storage
-        HDF5[(universal_knowledge_base.h5)] -.-> FAISS
-    end
+mcp_rs (Rust, rmcp) — stdio
+├── search_offline_knowledge_base
+├── iterative_rag_thinking
+├── ask_gemini
+└── execute_terminal_command
 
-    subgraph Rust Agent Integration
-        MCP[mcp_rs / MCP Server] -->|Tool /search| Proxy
-    end
+vector_explorer_rs (Rust, wgpu + egui)
+└── Native Wayland GPU point cloud renderer
 ```
 
 ## 🚀 Quick Start / Setup
