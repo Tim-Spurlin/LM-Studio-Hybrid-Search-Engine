@@ -1,0 +1,70 @@
+[package]
+name = "vector_explorer"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "vector_explorer"
+path = "src/main.rs"
+
+[dependencies]
+# Window management — Wayland native
+winit = { version = "0.30", features = ["wayland"] }
+
+# GPU — Vulkan backend on Linux
+wgpu = { version = "22", features = ["vulkan-portability"] }
+
+# egui core
+egui = "0.29"
+
+# egui ↔ wgpu bridge
+egui-wgpu = "0.29"
+
+# egui ↔ winit bridge
+egui-winit = "0.29"
+
+# Math — matrices, vectors, quaternions
+glam = "0.29"
+
+# Async runtime for HTTP calls to proxy_server.py
+tokio = { version = "1", features = ["full"] }
+
+# HTTP client for proxy_server.py /search endpoint
+reqwest = { version = "0.12", features = ["json"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# CSV/TSV reading for metadata.tsv
+csv = "1"
+
+# NPY file reading for umap_3d_cache.npy
+npyz = "0.8"
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+# Fast hashmap for category → color lookup
+rustc-hash = "2"
+
+# Thread-safe shared state between tokio tasks and render thread
+parking_lot = "0.12"
+
+# Progress during data load
+indicatif = "0.17"
+
+# GPU data casting
+bytemuck = { version = "1", features = ["derive"] }
+
+# Block on async from sync context
+pollster = "0.4"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.dev]
+opt-level = 1

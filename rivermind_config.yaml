@@ -1,0 +1,4 @@
+prior_deceptive: 0.15
+truth_score_threshold: 0.75
+max_chunks: 5
+svd_rank: 32
